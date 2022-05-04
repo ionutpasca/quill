@@ -455,7 +455,8 @@ Quill.imports = {
   'core/theme': Theme,
 };
 
-function expandConfig(container, userConfig) {
+function expandConfig(container, userConfig, containerDocument) {
+  containerDocument = containerDocument || document
   userConfig = merge(
     {
       container,
@@ -520,7 +521,7 @@ function expandConfig(container, userConfig) {
   );
   ['bounds', 'container', 'scrollingContainer'].forEach(key => {
     if (typeof userConfig[key] === 'string') {
-      userConfig[key] = document.querySelector(userConfig[key]);
+      userConfig[key] = containerDocument.querySelector(userConfig[key]);
     }
   });
   userConfig.modules = Object.keys(userConfig.modules).reduce(

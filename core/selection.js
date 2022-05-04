@@ -27,7 +27,7 @@ class Selection {
     this.lastNative = null;
     this.handleComposition();
     this.handleDragging();
-    this.emitter.listenDOM('selectionchange', document, () => {
+    this.emitter.listenDOM('selectionchange', this.root.ownerDocument, () => {
       if (!this.mouseDown && !this.composing) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
@@ -90,10 +90,10 @@ class Selection {
   }
 
   handleDragging() {
-    this.emitter.listenDOM('mousedown', document.body, () => {
+    this.emitter.listenDOM('mousedown', this.root.ownerDocument.body, () => {
       this.mouseDown = true;
     });
-    this.emitter.listenDOM('mouseup', document.body, () => {
+    this.emitter.listenDOM('mouseup', this.root.ownerDocument.body, () => {
       this.mouseDown = false;
       this.update(Emitter.sources.USER);
     });
@@ -151,7 +151,7 @@ class Selection {
     }
     let side = 'left';
     let rect;
-    if (node instanceof Text) {
+    if (node instanceof Text || node.nodeType === Node.TEXT_NODE) {
       // Return null if the text node is empty because it is
       // not able to get a useful client rect:
       // https://github.com/w3c/csswg-drafts/issues/2514.
@@ -184,7 +184,7 @@ class Selection {
   }
 
   getNativeRange() {
-    const selection = document.getSelection();
+    const selection = this.root.ownerDocument.getSelection();
     if (selection == null || selection.rangeCount <= 0) return null;
     const nativeRange = selection.getRangeAt(0);
     if (nativeRange == null) return null;
@@ -208,8 +208,8 @@ class Selection {
 
   hasFocus() {
     return (
-      document.activeElement === this.root ||
-      contains(this.root, document.activeElement)
+      this.root.ownerDocument.activeElement === this.root ||
+      contains(this.root, this.root.ownerDocument.activeElement)
     );
   }
 
@@ -331,7 +331,7 @@ class Selection {
     ) {
       return;
     }
-    const selection = document.getSelection();
+    const selection = this.root.ownerDocument.getSelection();
     if (selection == null) return;
     if (startNode != null) {
       if (!this.hasFocus()) this.root.focus();
@@ -356,7 +356,7 @@ class Selection {
           );
           endNode = endNode.parentNode;
         }
-        const range = document.createRange();
+        const range = this.root.ownerDocument.createRange();
         range.setStart(startNode, startOffset);
         range.setEnd(endNode, endOffset);
         selection.removeAllRanges();
