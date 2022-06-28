@@ -5,7 +5,7 @@ import Selection from '../../core/selection';
 import Scroll from '../../blots/scroll';
 import Quill, { globalRegistry } from '../../core/quill';
 
-const div = document.createElement('div');
+const div = setupTestContainer();
 div.id = 'test-container';
 document.body.appendChild(div);
 

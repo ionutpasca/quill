@@ -456,7 +456,7 @@ Quill.imports = {
 };
 
 function expandConfig(container, userConfig, containerDocument) {
-  containerDocument = containerDocument || document
+  containerDocument = containerDocument || document;
   userConfig = merge(
     {
       container,
